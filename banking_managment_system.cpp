@@ -64,6 +64,10 @@ public:
 
     // Deposit money
     void deposit(double amount) {
+        if (amount <= 0) {
+            cout << "Invalid amount. Please enter a positive value.\n";
+            return;
+        }
         balance += amount;
         transactionHistory.push_back({getCurrentDate(), "Deposit", amount, balance});
         cout << "Deposited: $" << amount << " | New Balance: $" << balance << endl;
@@ -71,6 +75,10 @@ public:
 
     // Withdraw money
     void withdraw(double amount) {
+        if (amount <= 0) {
+            cout << "Invalid amount. Please enter a positive value.\n";
+            return;
+        }
         if (amount <= balance) {
             balance -= amount;
             transactionHistory.push_back({getCurrentDate(), "Withdrawal", amount, balance});
@@ -82,6 +90,10 @@ public:
 
     // Pay bills
     void payBill(string billType, double amount) {
+        if (amount <= 0) {
+            cout << "Invalid amount. Please enter a positive value.\n";
+            return;
+        }
         if (amount <= balance) {
             balance -= amount;
             transactionHistory.push_back({getCurrentDate(), "Bill Payment (" + billType + ")", amount, balance});
@@ -93,6 +105,10 @@ public:
 
     // Transfer money to another account
     void transferMoney(BankAccount &toAccount, double amount) {
+        if (amount <= 0) {
+            cout << "Invalid amount. Please enter a positive value.\n";
+            return;
+        }
         if (amount <= balance) {
             balance -= amount;
             toAccount.balance += amount;
@@ -106,6 +122,10 @@ public:
 
     // Transfer money to a phone number (simulating mobile money transfer)
     void transferMoneyToPhone(string phoneNumber, double amount) {
+        if (amount <= 0) {
+            cout << "Invalid amount. Please enter a positive value.\n";
+            return;
+        }
         if (amount <= balance) {
             balance -= amount;
             transactionHistory.push_back({getCurrentDate(), "Transfer to Phone " + phoneNumber, amount, balance});
@@ -143,14 +163,20 @@ BankAccount registerNewUser() {
     int typeChoice;
 
     cout << "Enter your name: ";
-    cin.ignore();  // Clear any stray input
-    getline(cin, name);  // Ensure name can be entered with spaces
+    cin.ignore();
+    getline(cin, name);
     cout << "Enter account number: ";
     cin >> number;
     cout << "Set a password: ";
     cin >> password;
-    cout << "Enter initial balance: ";
-    cin >> initialBalance;
+
+    do {
+        cout << "Enter initial balance (must be positive): ";
+        cin >> initialBalance;
+        if (initialBalance <= 0)
+            cout << "Initial balance must be positive. Try again.\n";
+    } while (initialBalance <= 0);
+
     cout << "Choose account type (1 for Savings, 2 for Current): ";
     cin >> typeChoice;
 
@@ -208,7 +234,7 @@ int main() {
                     cout << "Enter your choice: ";
                     cin >> accountChoice;
 
-                    cin.ignore();  // Clear the input buffer after reading an integer
+                    cin.ignore();
 
                     if (accountChoice == 1) {
                         loggedInAccount->displayAccountDetails();
@@ -227,10 +253,9 @@ int main() {
                     } else if (accountChoice == 5) {
                         string billType;
                         double amount;
-                        cout << "Enter bill type (e.g., Electricity, Water): ";
-                        cin.ignore();
-                        getline(cin, billType);
-                        cout << "Enter bill amount: ";
+                        cout << "Enter bill type: ";
+                        cin >> billType;
+                        cout << "Enter amount to pay: ";
                         cin >> amount;
                         loggedInAccount->payBill(billType, amount);
                     } else if (accountChoice == 6) {
@@ -259,29 +284,31 @@ int main() {
                         }
 
                         if (!found) {
-                            cout << "Account not found!\n";
+                            cout << "Target account not found.\n";
                         }
                     } else if (accountChoice == 9) {
                         string phoneNumber;
                         double amount;
-                        cout << "Enter phone number: ";
+                        cout << "Enter phone number to transfer to: ";
                         cin >> phoneNumber;
                         cout << "Enter amount to transfer: ";
                         cin >> amount;
                         loggedInAccount->transferMoneyToPhone(phoneNumber, amount);
                     } else if (accountChoice == 10) {
-                        break;  // Logout
+                        cout << "Logged out successfully.\n";
+                        break;
                     } else {
-                        cout << "Invalid choice. Try again.\n";
+                        cout << "Invalid choice. Please try again.\n";
                     }
                 }
             } else {
-                cout << "Invalid login credentials.\n";
+                cout << "Login failed. Invalid account number or password.\n";
             }
         } else if (choice == 3) {
-            break;  // Exit
+            cout << "Exiting... Thank you for using the banking system.\n";
+            break;
         } else {
-            cout << "Invalid choice. Try again.\n";
+            cout << "Invalid choice. Please try again.\n";
         }
     }
 
